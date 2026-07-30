@@ -1,0 +1,99 @@
+name: New algorithm
+description: Propose an algorithm to add
+title: "[Algorithm] "
+labels: ["implementation", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for proposing an algorithm!
+
+  - type: input
+    id: name
+    attributes:
+      label: Algorithm
+      placeholder: Decision Tree (CART)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: family
+    attributes:
+      label: Family
+      description: Which folder does it belong in?
+      options:
+        - linear
+        - tree
+        - cluster
+        - decomposition
+        - svm
+        - probabilistic
+        - optim
+        - neural
+        - not sure / a new family
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What is it, and why does it belong here?
+      description: A short paragraph. What does it do, and what would someone learn from it?
+    validations:
+      required: true
+
+  - type: textarea
+    id: references
+    attributes:
+      label: References you will learn from
+      description: |
+        The original paper if there is one, and any textbook chapter. Every reference
+        must be one you actually opened and read yourself, see AI_POLICY.md.
+      placeholder: |
+        - Breiman et al. (1984). Classification and Regression Trees.
+        - Hastie, Tibshirani & Friedman (2009). ESL, ch. 9.2.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: maturity
+    attributes:
+      label: How finished do you plan to make it?
+      description: See docs/ALGORITHM_TEMPLATE.md.
+      options:
+        - complete
+        - draft
+        - polished
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: What you plan to include
+      options:
+        - label: "scratch.py, plain Python version"
+        - label: "numpy_impl.py, the fast version"
+        - label: "torch_impl.py, if it genuinely adds something"
+        - label: "the intuition, derivation and complexity pages"
+        - label: "tests against production libraries"
+        - label: "a runnable example"
+        - label: "a visualiser panel"
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else
+      description: Questions, parts you expect to find tricky, help you'd like.
+
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Before you start
+      options:
+        - label: I checked this algorithm isn't already being worked on
+          required: true
+        - label: I read CONTRIBUTING.md and docs/ALGORITHM_TEMPLATE.md
+          required: true
+        - label: I understand a reviewer may ask me to explain my code
+          required: true

@@ -1,0 +1,64 @@
+name: Bug report
+description: Something does not work as documented
+title: "[Bug] "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A five-line reproduction is worth more than a paragraph of description.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What did you do, and what went wrong?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: The shortest code that shows the problem. It should run on its own.
+      render: python
+      placeholder: |
+        import numpy as np
+        from mlblueprint.cluster import KMeans
+
+        X = np.array([[1.0, 2.0], [1.0, 2.0]])
+        KMeans(n_clusters=3).fit(X)   # raises IndexError
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected instead
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: What you got
+      description: The full traceback, if there is one.
+      render: shell
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: |
+        Output of:
+        `python -c "import sys, numpy, mlblueprint; print(sys.version, numpy.__version__, mlblueprint.__version__)"`
+      render: shell
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: offer
+    attributes:
+      label: Optional
+      options:
+        - label: I would like to fix this myself

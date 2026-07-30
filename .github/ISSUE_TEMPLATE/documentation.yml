@@ -1,0 +1,56 @@
+name: Documentation
+description: Something is missing, unclear, or wrong in the documentation
+title: "[Docs] "
+labels: ["docs", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Documentation counts as a real contribution here, for most readers it *is* the
+        product. "I could not follow this" is a completely valid report.
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind of issue
+      options:
+        - Something is missing
+        - Something is unclear or hard to follow
+        - Something is factually wrong
+        - A derivation skips a step
+        - A reference is broken, wrong, or does not exist
+        - A typo or formatting problem
+    validations:
+      required: true
+
+  - type: input
+    id: where
+    attributes:
+      label: Where
+      description: File path, or a link to the section.
+      placeholder: mlblueprint/cluster/kmeans/docs/derivation.md
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is the problem
+      description: |
+        If you got stuck, say exactly where. The point at which a reader loses the thread
+        is the most useful information in this report.
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested fix
+      description: Optional. Even a rough idea helps.
+
+  - type: checkboxes
+    id: offer
+    attributes:
+      label: Optional
+      options:
+        - label: I would like to fix this myself
