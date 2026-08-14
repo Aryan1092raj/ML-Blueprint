@@ -1,7 +1,7 @@
 # Linear Regression
 
 Family: linear  
-Completion & Scope: Fully Complete  
+Completion & Scope: `complete` 
 Maintainers: @Frozen-afk
 
 Linear Regression is a fundamental supervised learning algorithm that models 

@@ -1,12 +1,14 @@
+"""NumPy implementation of Linear Regression with L2 regularization."""
+
 import numpy as np
 
+
 class LinearRegression:
-    
     """
     Ridge Regression (L2 Regularized Linear Regression) using Gradient Descent.
-    
+
     Loss = (1/2N) * sum((y_hat - y)^2) + lam * sum(w^2)
-    
+
     Parameters
     ----------
     lr : float
@@ -18,13 +20,29 @@ class LinearRegression:
     """
 
     def __init__(self, lr=0.01, n_iters=1000, lam=0.1):
+        """Initialize hyperparameters."""
         self.lr = lr
-        self.n_iters = n_iters 
-        self.lam = lam 
+        self.n_iters = n_iters
+        self.lam = lam
         self.weights = None
         self.bias = None
 
     def fit(self, X, y):
+        """
+        Train the model using Gradient Descent.
+
+        Parameters
+        ----------
+        X : array-like, shape (n_samples, n_features)
+            Training input data.
+        y : array-like, shape (n_samples,)
+            Target values.
+
+        Returns
+        -------
+        self : LinearRegression
+            The trained model.
+        """
         X = np.array(X)
         y = np.array(y)
 
@@ -36,27 +54,40 @@ class LinearRegression:
 
         # training loop
         for epoch in range(self.n_iters):
-
-            # forward pass 
-            y_hat = X@self.weights + self.bias
+            # forward pass
+            y_hat = X @ self.weights + self.bias
 
             # loss
-            mse = np.mean((y_hat-y)**2)/2 + self.lam*np.sum((self.weights**2))
+            mse = np.mean((y_hat - y) ** 2) / 2 + self.lam * np.sum(self.weights**2)
 
             # print loss
-            if epoch%100==0:
+            if epoch % 100 == 0:
                 print(f"epoch {epoch} loss: {mse}")
 
             # backpropagation
-            dw = (1/n_samples)*(np.dot(X.T,y_hat-y)) + 2*self.lam*self.weights
-            db = (1/n_samples)*(np.sum(y_hat-y))
+            dw = (1 / n_samples) * (
+                np.dot(X.T, y_hat - y)
+            ) + 2 * self.lam * self.weights
+            db = (1 / n_samples) * (np.sum(y_hat - y))
 
-            # update 
-            self.weights -= self.lr*dw
-            self.bias -= self.lr*db
+            # update
+            self.weights -= self.lr * dw
+            self.bias -= self.lr * db
 
     def predict(self, X):
-        X = np.array(X)
-        y_hat = X@self.weights + self.bias
-        return y_hat
+        """
+        Make predictions on new data.
 
+        Parameters
+        ----------
+        X : array-like, shape (n_samples, n_features)
+            Input data to predict on.
+
+        Returns
+        -------
+        np.ndarray, shape (n_samples,)
+            Predicted values.
+        """
+        X = np.array(X)
+        y_hat = X @ self.weights + self.bias
+        return y_hat
