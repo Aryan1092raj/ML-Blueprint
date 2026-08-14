@@ -48,6 +48,3 @@ implementation using Gradient Descent.
 | Training | O(T × N × n) |
 | Prediction | O(M × n) |
 | Space | O(N × n) |
-
-The implementation scales linearly with the number of samples, features, 
-and iterations, making it suitable for medium to large datasets.
