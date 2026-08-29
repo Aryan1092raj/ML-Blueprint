@@ -1,7 +1,17 @@
-"""Linear models.
+"""
+Linear models family.
 
-Models that predict using a straight-line combination of the features. The foundation
-most other algorithms build on or compare against.
+This family contains algorithms that learn linear relationships between
+features and targets, including both regression and classification models.
+
+Algorithms
+----------
+- LinearRegression: Linear regression with gradient descent
 """
 
-__all__: list[str] = []
+from .linear_regression import LinearRegression, LinearRegressionScratch
+
+__all__ = [
+    "LinearRegression",
+    "LinearRegressionScratch",
+]

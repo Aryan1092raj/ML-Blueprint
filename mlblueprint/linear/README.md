@@ -1,17 +1,19 @@
-# Linear models
+# Linear Models
 
-Models that predict using a straight-line combination of the features. The foundation most
-other algorithms build on or compare against.
+`mlblueprint.linear`
 
-**Import path:** `mlblueprint.linear`
+Algorithms that learn linear relationships between features and targets.
 
-## A couple of notes
+## Algorithms
 
-A great place to start if you're new here. Linear regression is the shortest path from a
-derivation to working code.
+| Algorithm | Status | Description |
+|-----------|--------|-------------|
+| [Linear Regression](linear_regression/) | `complete` | Predicts continuous values using a linear equation |
 
-Every algorithm here follows the same layout, see
-[docs/ALGORITHM_TEMPLATE.md](../../docs/ALGORITHM_TEMPLATE.md).
+## Common Properties
 
-This family can use code from `mlblueprint.core` and from outside libraries, but not from a
-different family folder. See [docs/ARCHITECTURE.md](../../docs/ARCHITECTURE.md) for why.
+All linear models in this family:
+- Learn weights (coefficients) for each feature
+- Include a bias term (intercept)
+- Are interpretable and fast to train
+- Work well as baseline models before trying more complex algorithms

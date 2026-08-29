@@ -10,7 +10,7 @@ request that adds the algorithm.
 
 | Algorithm | Maintainer |
 |---|---|
-| _none yet_ |
+| Linear Regression | @Frozen-afk |
 
 ## Trees and ensembles
 
