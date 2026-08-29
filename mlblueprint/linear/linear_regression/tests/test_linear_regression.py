@@ -1,15 +1,10 @@
 """Tests for Linear Regression implementation."""
-import sys
-import os
 import random
+
 import numpy as np
 from sklearn.linear_model import LinearRegression as sklearnLR
 
-# Add parent directory to path so we can import the modules
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from numpy_impl import LinearRegression
-from scratch import LinearRegression as LinearRegressionScratch
+from mlblueprint.linear import LinearRegression, LinearRegressionScratch
 
 
 class TestLinearRegression:
