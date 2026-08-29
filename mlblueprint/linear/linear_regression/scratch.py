@@ -1,6 +1,5 @@
 """Pure Python implementation of Linear Regression without external libraries."""
 
-
 import random
 
 

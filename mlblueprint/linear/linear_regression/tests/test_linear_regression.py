@@ -1,4 +1,5 @@
 """Tests for Linear Regression implementation."""
+
 import random
 
 import numpy as np
@@ -14,8 +15,8 @@ class TestLinearRegression:
         """Test that model can learn y = 3x+2."""
         np.random.seed(42)
 
-        X = np.array([[1],[2],[3],[4],[5]])
-        y = np.array([5,8,11,14,17])
+        X = np.array([[1], [2], [3], [4], [5]])
+        y = np.array([5, 8, 11, 14, 17])
 
         model = LinearRegression(lr=0.1, n_iters=2000, lam=0)
         model.fit(X, y)
@@ -25,14 +26,13 @@ class TestLinearRegression:
         # bias should be close to 2 with threshold 0.5
         assert abs(model.bias - 2.0) < 0.5
 
-
     def test_scratch_vs_numpy(self):
         """Test that scratch and numpy implementations give similar results."""
         random.seed(42)
         np.random.seed(42)
 
-        X = [[1],[2],[3],[4],[5]]
-        y = [5,8,11,14,17]
+        X = [[1], [2], [3], [4], [5]]
+        y = [5, 8, 11, 14, 17]
 
         # train both models
         model_scratch = LinearRegressionScratch(lr=0.1, n_iters=2000)
@@ -57,7 +57,7 @@ class TestLinearRegression:
         X = np.array([[1], [2], [3], [4], [5], [6], [7], [8]])
         y = np.array([2.1, 3.9, 6.2, 8.1, 9.8, 12.1, 14.0, 15.9])
 
-        # train our model 
+        # train our model
         our_model = LinearRegression(lr=0.01, n_iters=5000, lam=0)
         our_model.fit(X, y)
 
@@ -66,10 +66,14 @@ class TestLinearRegression:
         sklearn_model.fit(X, y)
 
         # compare weights (slope)
-        assert abs(our_model.weights[0] - sklearn_model.coef_[0]) < 0.1, "Weights don't match sklearn!"
-        
+        assert abs(our_model.weights[0] - sklearn_model.coef_[0]) < 0.1, (
+            "Weights don't match sklearn!"
+        )
+
         # compare bias (intercept)
-        assert abs(our_model.bias - sklearn_model.intercept_) < 0.1, "Bias doesn't match sklearn!"
+        assert abs(our_model.bias - sklearn_model.intercept_) < 0.1, (
+            "Bias doesn't match sklearn!"
+        )
 
         # Compare predictions
         our_preds = our_model.predict(X)
