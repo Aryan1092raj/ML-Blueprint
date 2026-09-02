@@ -29,12 +29,12 @@ This squashes any number into the range (0, 1), which we interpret as the probab
 
 We still use gradient descent, but the loss function changes. We can't use MSE anymore — it's not convex for logistic regression. Instead we use **log-loss** (cross-entropy):
 
-$$L = -\frac{1}{N} \sum_{i=1}^{N} \left[ y^{(i)} \log(\hat{y}^{(i)}) + (1 - y^{(i)}) \log(1 - \hat{y}^{(i)}) \right]$$
+$$L = -\frac{1}{n} \sum_{i=1}^{n} \left[ y^{(i)} \log(\hat{y}^{(i)}) + (1 - y^{(i)}) \log(1 - \hat{y}^{(i)}) \right]$$
 
 Where $\hat{y}^{(i)} = \sigma(z^{(i)})$ is the predicted probability.
 
 The gradient has a beautifully simple form:
-$$\frac{\partial L}{\partial w} = \frac{1}{N} X^T (\hat{y} - y)$$
+$$\frac{\partial L}{\partial w} = \frac{1}{n} X^T (\hat{y} - y)$$
 
 This is almost the same as linear regression — just replace the raw prediction with the probability.
 

@@ -2,13 +2,13 @@
 
 ## 1. The Model
 
-For a dataset with $N$ samples and $n$ features, the logistic regression model predicts the probability of the positive class as:
+For a dataset with $n$ samples and $d$ features, the logistic regression model predicts the probability of the positive class as:
 
 $$\hat{y} = \sigma(z) = \frac{1}{1 + e^{-z}}$$
 
 where the linear predictor $z$ is:
 
-$$z = w_1x_1 + w_2x_2 + ... + w_nx_n + b$$
+$$z = w_1x_1 + w_2x_2 + ... + w_dx_d + b$$
 
 In vectorized notation:
 
@@ -17,10 +17,11 @@ $$z = Xw + b$$
 $$\hat{y} = \sigma(Xw + b)$$
 
 Where:
-- **$X$** is the input feature matrix of shape $(N, n)$
-- **$w$** is the weight vector of shape $(n, 1)$
+- **$X$** is the input feature matrix of shape $(n, d)$
+- **$w$** is the weight vector of shape $(d, 1)$
 - **$b$** is the bias term (scalar)
-- **$N$** is the number of training examples
+- **$n$** is the number of training examples
+- **$d$** is the number of features
 - **$\sigma(\cdot)$** is the sigmoid function
 - **$\hat{y}$** is the predicted probability of class 1
 
@@ -30,17 +31,17 @@ We assume each label $y^{(i)} \in \{0, 1\}$ is drawn from a Bernoulli distributi
 
 $$P(y^{(i)} \mid x^{(i)}) = (\hat{y}^{(i)})^{y^{(i)}} (1 - \hat{y}^{(i)})^{1 - y^{(i)}}$$
 
-The likelihood over all $N$ independent examples is:
+The likelihood over all $n$ independent examples is:
 
-$$\mathcal{L}(w, b) = \prod_{i=1}^{N} (\hat{y}^{(i)})^{y^{(i)}} (1 - \hat{y}^{(i)})^{1 - y^{(i)}}$$
+$$\mathcal{L}(w, b) = \prod_{i=1}^{n} (\hat{y}^{(i)})^{y^{(i)}} (1 - \hat{y}^{(i)})^{1 - y^{(i)}}$$
 
 Taking the log:
 
-$$\log \mathcal{L}(w, b) = \sum_{i=1}^{N} \left[ y^{(i)} \log \hat{y}^{(i)} + (1 - y^{(i)}) \log(1 - \hat{y}^{(i)}) \right]$$
+$$\log \mathcal{L}(w, b) = \sum_{i=1}^{n} \left[ y^{(i)} \log \hat{y}^{(i)} + (1 - y^{(i)}) \log(1 - \hat{y}^{(i)}) \right]$$
 
 We minimize the **negative average log-likelihood**, giving the binary cross-entropy loss:
 
-$$L(w, b) = -\frac{1}{N} \sum_{i=1}^{N} \left[ y^{(i)} \log \hat{y}^{(i)} + (1 - y^{(i)}) \log(1 - \hat{y}^{(i)}) \right]$$
+$$L(w, b) = -\frac{1}{n} \sum_{i=1}^{n} \left[ y^{(i)} \log \hat{y}^{(i)} + (1 - y^{(i)}) \log(1 - \hat{y}^{(i)}) \right]$$
 
 ## 3. Computing the Gradients
 
@@ -74,27 +75,27 @@ The sigmoid terms cancel exactly, leaving just the prediction error.
 
 $$\frac{\partial \ell_i}{\partial w_j} = \frac{\partial \ell_i}{\partial z^{(i)}} \cdot \frac{\partial z^{(i)}}{\partial w_j} = (\hat{y}^{(i)} - y^{(i)}) \cdot x_j^{(i)}$$
 
-Averaging over all $N$ examples:
+Averaging over all $n$ examples:
 
-$$\frac{\partial L}{\partial w_j} = \frac{1}{N} \sum_{i=1}^{N} (\hat{y}^{(i)} - y^{(i)}) \cdot x_j^{(i)}$$
+$$\frac{\partial L}{\partial w_j} = \frac{1}{n} \sum_{i=1}^{n} (\hat{y}^{(i)} - y^{(i)}) \cdot x_j^{(i)}$$
 
 In vectorized form:
 
-$$\frac{\partial L}{\partial w} = \frac{1}{N} X^T (\hat{y} - y)$$
+$$\frac{\partial L}{\partial w} = \frac{1}{n} X^T (\hat{y} - y)$$
 
 ### 3.4 Derivative with respect to Bias ($b$)
 
-$$\frac{\partial L}{\partial b} = \frac{1}{N} \sum_{i=1}^{N} (\hat{y}^{(i)} - y^{(i)})$$
+$$\frac{\partial L}{\partial b} = \frac{1}{n} \sum_{i=1}^{n} (\hat{y}^{(i)} - y^{(i)})$$
 
 ## 4. Convexity
 
 The Hessian of the loss with respect to $w$ is:
 
-$$\nabla_w^2 L = \frac{1}{N} X^T R X$$
+$$\nabla_w^2 L = \frac{1}{n} X^T R X$$
 
 where $R = \operatorname{diag}\left(\hat{y}^{(i)}(1 - \hat{y}^{(i)})\right)$ is a diagonal matrix with non-negative entries. For any vector $v$:
 
-$$v^T (\nabla_w^2 L) v = \frac{1}{N} (X v)^T R (X v) \ge 0$$
+$$v^T (\nabla_w^2 L) v = \frac{1}{n} (X v)^T R (X v) \ge 0$$
 
 Thus $L$ is convex in $w$.
 
@@ -108,9 +109,9 @@ $$b := b - \alpha \frac{\partial L}{\partial b}$$
 
 Substituting the gradients:
 
-$$w := w - \frac{\alpha}{N} X^T (\hat{y} - y)$$
+$$w := w - \frac{\alpha}{n} X^T (\hat{y} - y)$$
 
-$$b := b - \frac{\alpha}{N} \sum_{i=1}^{N} (\hat{y}^{(i)} - y^{(i)})$$
+$$b := b - \frac{\alpha}{n} \sum_{i=1}^{n} (\hat{y}^{(i)} - y^{(i)})$$
 
 We repeat until convergence (loss stops decreasing significantly).
 
