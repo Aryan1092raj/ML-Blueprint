@@ -1,7 +1,7 @@
 # Logistic Regression
 
 Family: linear
-Completion & Scope: draft
+Completion & Scope: `complete`
 Maintainers: @aryan-raj
 
 Binary classification using a linear model passed through the sigmoid function, trained by gradient descent on log-loss. Teaches numerical stability of the loss, gradient computation, and how a simple linear model becomes a probability estimator.
@@ -10,8 +10,8 @@ Binary classification using a linear model passed through the sigmoid function, 
 
 | Version | File | Done? |
 |---|---|---|
-| Plain Python | `scratch.py` | no |
-| Fast version | `numpy_impl.py` | no |
+| Plain Python | `scratch.py` | yes |
+| Fast version | `numpy_impl.py` | yes |
 | PyTorch | `torch_impl.py` | no |
 
 ## Docs
@@ -21,5 +21,30 @@ Binary classification using a linear model passed through the sigmoid function, 
 ## Usage
 
 ```python
+import numpy as np
+
 from mlblueprint.linear import LogisticRegression
+
+X = np.array([[-2.0], [-1.0], [1.0], [2.0]])
+y = np.array([0, 0, 1, 1])
+
+model = LogisticRegression(lr=0.5, n_iters=2000, lam=0.0, random_state=42).fit(X, y)
+
+model.predict(np.array([[1.5]]))  # array([1])
+model.predict_proba(np.array([[1.5]]))  # array([0.97...])
+model.loss_history_[-1] < model.loss_history_[0]  # True
 ```
+
+`fit` learns `w_` (weights) and `b_` (intercept), and records the loss at every
+iteration in `loss_history_`. Labels must be exactly 0 and 1.
+
+The pure-Python version takes and returns lists instead of arrays:
+
+```python
+from mlblueprint.linear import LogisticRegressionScratch
+
+model = LogisticRegressionScratch(lr=0.5, n_iters=2000, random_state=42)
+model.fit([[-2.0], [-1.0], [1.0], [2.0]], [0, 0, 1, 1])
+```
+
+Run `python -m mlblueprint.linear.logistic_regression.example` for a worked end-to-end run.
