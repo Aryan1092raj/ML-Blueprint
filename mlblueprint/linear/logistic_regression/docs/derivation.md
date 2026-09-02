@@ -2,7 +2,7 @@
 
 ## 1. The Model
 
-For a dataset with $n$ features, the logistic regression model predicts the probability of the positive class as:
+For a dataset with $N$ samples and $n$ features, the logistic regression model predicts the probability of the positive class as:
 
 $$\hat{y} = \sigma(z) = \frac{1}{1 + e^{-z}}$$
 
@@ -24,39 +24,43 @@ Where:
 - **$\sigma(\cdot)$** is the sigmoid function
 - **$\hat{y}$** is the predicted probability of class 1
 
-## 2. The Loss Function
+## 2. The Loss Function — Bernoulli MLE
 
-We use **log-loss** (binary cross-entropy) as our loss function:
+We assume each label $y^{(i)} \in \{0, 1\}$ is drawn from a Bernoulli distribution parameterized by $\hat{y}^{(i)}$:
 
-$$L(w, b) = -\frac{1}{N} \sum_{i=1}^{N} \left[ y^{(i)} \log(\hat{y}^{(i)}) + (1 - y^{(i)}) \log(1 - \hat{y}^{(i)}) \right]$$
+$$P(y^{(i)} \mid x^{(i)}) = (\hat{y}^{(i)})^{y^{(i)}} (1 - \hat{y}^{(i)})^{1 - y^{(i)}}$$
 
-**Why log-loss?**
-- It comes from Maximum Likelihood Estimation assuming Bernoulli-distributed labels.
-- It is convex with respect to the parameters (unlike MSE applied to sigmoid outputs).
-- It heavily penalizes confident wrong predictions (e.g., predicting 0.99 when true label is 0).
-- The gradient has a simple, numerically stable form.
+The likelihood over all $N$ independent examples is:
+
+$$\mathcal{L}(w, b) = \prod_{i=1}^{N} (\hat{y}^{(i)})^{y^{(i)}} (1 - \hat{y}^{(i)})^{1 - y^{(i)}}$$
+
+Taking the log:
+
+$$\log \mathcal{L}(w, b) = \sum_{i=1}^{N} \left[ y^{(i)} \log \hat{y}^{(i)} + (1 - y^{(i)}) \log(1 - \hat{y}^{(i)}) \right]$$
+
+We minimize the **negative average log-likelihood**, giving the binary cross-entropy loss:
+
+$$L(w, b) = -\frac{1}{N} \sum_{i=1}^{N} \left[ y^{(i)} \log \hat{y}^{(i)} + (1 - y^{(i)}) \log(1 - \hat{y}^{(i)}) \right]$$
 
 ## 3. Computing the Gradients
 
-To minimize the loss, we compute the gradient of $L$ with respect to $w$ and $b$. The gradient points in the direction of steepest increase, so we move in the opposite direction.
-
 ### 3.1 Derivative of the sigmoid
 
-First, a useful identity for the sigmoid derivative:
+A useful identity:
 
 $$\sigma'(z) = \frac{d}{dz} \frac{1}{1 + e^{-z}} = \frac{e^{-z}}{(1 + e^{-z})^2} = \sigma(z)(1 - \sigma(z))$$
 
 ### 3.2 Derivative of loss with respect to $z$
 
-For a single training example $i$, the loss is:
+For a single example $i$, the loss is:
 
-$$\ell_i = - \left[ y^{(i)} \log(\hat{y}^{(i)}) + (1 - y^{(i)}) \log(1 - \hat{y}^{(i)}) \right]$$
+$$\ell_i = - \left[ y^{(i)} \log \hat{y}^{(i)} + (1 - y^{(i)}) \log(1 - \hat{y}^{(i)}) \right]$$
 
 Derivative with respect to $\hat{y}^{(i)}$:
 
 $$\frac{\partial \ell_i}{\partial \hat{y}^{(i)}} = -\frac{y^{(i)}}{\hat{y}^{(i)}} + \frac{1 - y^{(i)}}{1 - \hat{y}^{(i)}} = \frac{\hat{y}^{(i)} - y^{(i)}}{\hat{y}^{(i)}(1 - \hat{y}^{(i)})}$$
 
-Now apply chain rule through the sigmoid:
+Chain rule through the sigmoid:
 
 $$\frac{\partial \ell_i}{\partial z^{(i)}} = \frac{\partial \ell_i}{\partial \hat{y}^{(i)}} \cdot \frac{\partial \hat{y}^{(i)}}{\partial z^{(i)}}$$
 
@@ -64,19 +68,17 @@ $$= \frac{\hat{y}^{(i)} - y^{(i)}}{\hat{y}^{(i)}(1 - \hat{y}^{(i)})} \cdot \hat{
 
 $$= \hat{y}^{(i)} - y^{(i)}$$
 
-**Beautiful simplification:** the messy sigmoid terms cancel out, leaving just the prediction error.
+The sigmoid terms cancel exactly, leaving just the prediction error.
 
 ### 3.3 Derivative with respect to Weights ($w$)
 
-Using the chain rule again:
-
 $$\frac{\partial \ell_i}{\partial w_j} = \frac{\partial \ell_i}{\partial z^{(i)}} \cdot \frac{\partial z^{(i)}}{\partial w_j} = (\hat{y}^{(i)} - y^{(i)}) \cdot x_j^{(i)}$$
 
-Averaging over all $N$ training examples:
+Averaging over all $N$ examples:
 
 $$\frac{\partial L}{\partial w_j} = \frac{1}{N} \sum_{i=1}^{N} (\hat{y}^{(i)} - y^{(i)}) \cdot x_j^{(i)}$$
 
-In **vectorized form** (all weights at once):
+In vectorized form:
 
 $$\frac{\partial L}{\partial w} = \frac{1}{N} X^T (\hat{y} - y)$$
 
@@ -84,15 +86,25 @@ $$\frac{\partial L}{\partial w} = \frac{1}{N} X^T (\hat{y} - y)$$
 
 $$\frac{\partial L}{\partial b} = \frac{1}{N} \sum_{i=1}^{N} (\hat{y}^{(i)} - y^{(i)})$$
 
-## 4. Gradient Descent Update Rule
+## 4. Convexity
 
-We update the parameters iteratively, moving in the **opposite** direction of the gradient:
+The Hessian of the loss with respect to $w$ is:
+
+$$\nabla_w^2 L = \frac{1}{N} X^T R X$$
+
+where $R = \operatorname{diag}\left(\hat{y}^{(i)}(1 - \hat{y}^{(i)})\right)$ is a diagonal matrix with non-negative entries. For any vector $v$:
+
+$$v^T (\nabla_w^2 L) v = \frac{1}{N} (X v)^T R (X v) \ge 0$$
+
+Thus $L$ is convex in $w$.
+
+## 5. Gradient Descent Update Rule
+
+We update parameters by moving opposite to the gradient:
 
 $$w := w - \alpha \frac{\partial L}{\partial w}$$
 
 $$b := b - \alpha \frac{\partial L}{\partial b}$$
-
-Where $\alpha$ is the learning rate.
 
 Substituting the gradients:
 
@@ -102,12 +114,26 @@ $$b := b - \frac{\alpha}{N} \sum_{i=1}^{N} (\hat{y}^{(i)} - y^{(i)})$$
 
 We repeat until convergence (loss stops decreasing significantly).
 
-## 5. Prediction
+## 6. Prediction
 
-For a new input $X$, the predicted probability is:
+For new input $X$, the predicted probability is:
 
 $$\hat{y} = \sigma(Xw + b)$$
 
-The class prediction uses a threshold (typically 0.5):
+The class prediction uses threshold 0.5:
 
 $$\text{class} = \begin{cases} 1 & \text{if } \hat{y} \geq 0.5 \\ 0 & \text{otherwise} \end{cases}$$
+
+Since $\sigma(z) \ge 0.5 \iff z \ge 0$, the decision boundary is:
+
+$$\boxed{w^T x + b = 0}$$
+
+This confirms logistic regression is a **linear classifier** — the boundary in feature space is a hyperplane.
+
+## 7. Numerical Stability Note
+
+The gradient simplifies to a compact form, while the loss itself should be evaluated carefully for numerical stability. The naive expression $\log(\sigma(z))$ can overflow. In implementation, use the log-sum-exp trick or equivalently:
+
+$$\ell(z, y) = \max(z, 0) - z y + \log(1 + e^{-|z|})$$
+
+This avoids computing $\sigma(z)$ directly when $z$ is large in magnitude.
