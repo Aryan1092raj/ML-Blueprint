@@ -13,30 +13,15 @@ Imagine you're a bank deciding whether to approve a loan application. You have t
 
 Linear regression would try to draw a straight line through this, but that doesn't make sense — the answer isn't a number, it's **yes or no**. What you really want is a **probability**: "Given this income and credit score, what's the chance they'll repay?"
 
-**That's what Logistic Regression does.** It takes a linear combination of your features and squashes it through an S-shaped curve (the sigmoid) to give you a probability between 0 and 1.
+**That's what Logistic Regression does.** It takes a weighted sum of your features plus a bias and squashes it through an S-shaped curve (the sigmoid) to give you a probability between 0 and 1. The full maths lives in [derivation](derivation.md).
 
 ## What is it actually doing?
 
-Logistic regression starts with the same linear model:
-$$z = w_1x_1 + w_2x_2 + ... + w_nx_n + b$$
+Start with the same linear score as linear regression: each feature gets a weight, plus one bias term. Large positive scores mean "very likely yes", large negative scores mean "very likely no", and zero means "fifty-fifty".
 
-But instead of using `z` directly, it passes it through the **sigmoid function**:
-$$\sigma(z) = \frac{1}{1 + e^{-z}}$$
+The sigmoid turns that score into a probability. Near zero the curve is steep, so small changes matter a lot. Far from zero it flattens out, so pushing an already-confident score further barely changes the probability.
 
-This squashes any number into the range (0, 1), which we interpret as the probability of the positive class.
-
-## How does it learn?
-
-We still use gradient descent, but the loss function changes. We can't use MSE anymore — it's not convex for logistic regression. Instead we use **log-loss** (cross-entropy):
-
-$$L = -\frac{1}{n} \sum_{i=1}^{n} \left[ y^{(i)} \log(\hat{y}^{(i)}) + (1 - y^{(i)}) \log(1 - \hat{y}^{(i)}) \right]$$
-
-Where $\hat{y}^{(i)} = \sigma(z^{(i)})$ is the predicted probability.
-
-The gradient has a beautifully simple form:
-$$\frac{\partial L}{\partial w} = \frac{1}{n} X^T (\hat{y} - y)$$
-
-This is almost the same as linear regression — just replace the raw prediction with the probability.
+To learn, we pick the weights that make the observed labels most likely. The loss for that (log-loss) punishes confident wrong answers far more than cautious ones: predicting 0.99 when the truth is 0 hurts much more than predicting 0.6. Training is gradient descent on that loss, and the gradient turns out to be just the prediction error (probability minus label) times the features — the same shape as linear regression, with probabilities in place of raw predictions.
 
 ## When would you use it?
 
@@ -47,9 +32,9 @@ This is almost the same as linear regression — just replace the raw prediction
 
 ## When would you NOT use it?
 
-- When classes aren't linearly separable (the decision boundary is curved)
+- When a straight line can't separate the classes and you need a curved boundary (trees or neural nets handle this better)
 - When you have more than two classes without modification (need multinomial/softmax)
-- When you need complex feature interactions (trees/neural nets handle this better)
+- When you need complex feature interactions without engineering them first
 
 ## The key takeaway
 

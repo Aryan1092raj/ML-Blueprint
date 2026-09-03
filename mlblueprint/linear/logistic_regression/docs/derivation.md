@@ -137,4 +137,20 @@ The gradient simplifies to a compact form, while the loss itself should be evalu
 
 $$\ell(z, y) = \max(z, 0) - z y + \log(1 + e^{-|z|})$$
 
-This avoids computing $\sigma(z)$ directly when $z$ is large in magnitude.
+This avoids computing $\sigma(z)$ directly when $z$ is large in magnitude. It never exponentiates a positive number: both $\exp(-z)$ for $z \ge 0$ and $\exp(z)$ for $z < 0$ are at most 1. The same care applies to the sigmoid itself — branch on the sign of $z$ and only exponentiate the non-positive side, since evaluating both branches of a vectorized conditional first still overflows on the unused side.
+
+## 8. L2 Regularization (the `lam` Option)
+
+The implementation optionally minimizes the regularized objective:
+
+$$J(w, b) = L(w, b) + \lambda \|w\|^2 = L(w, b) + \lambda \sum_{j=1}^{d} w_j^2$$
+
+where $\lambda$ is the `lam` hyperparameter ($\lambda = 0$ recovers plain logistic regression). The bias $b$ is not regularized, so the boundary can shift freely while large weights are discouraged.
+
+Since $\frac{\partial}{\partial w} \lambda \|w\|^2 = 2\lambda w$, the weight gradient gains one term and the bias gradient is unchanged:
+
+$$\frac{\partial J}{\partial w} = \frac{1}{n} X^T (\hat{y} - y) + 2\lambda w$$
+
+$$\frac{\partial J}{\partial b} = \frac{1}{n} \sum_{i=1}^{n} (\hat{y}^{(i)} - y^{(i)})$$
+
+The update is therefore identical to section 5 with the extra $2\lambda w$ pull toward zero. Adding $\lambda I$-scaled curvature keeps the problem convex, and `loss_history_` records this regularized value $J$, not the raw $L$.
